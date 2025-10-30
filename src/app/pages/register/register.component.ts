@@ -39,8 +39,26 @@ export class RegisterComponent {
 
 
   onSubmit() {
-    if (this.registerForm.valid) {
-      console.log(this.registerForm.value);
-    }
+  console.log('onSubmit ejecutado');
+  if (this.registerForm.valid) {
+    const newCredential = {
+      nombre: this.registerForm.value.nombre,
+      email: this.registerForm.value.email,
+      password: this.registerForm.value.password
+    };
+
+    // Contar cuántas cookies hay que empiezan por credential_
+    const allCookies = document.cookie.split('; ');
+    const credentialCookies = allCookies.filter(row => row.startsWith('credential_'));
+    const nextIndex = credentialCookies.length + 1;
+
+    // Guardar la credencial en una cookie separada, en formato crudo
+    document.cookie = `credential_${nextIndex}=${JSON.stringify(newCredential)}; path=/; max-age=${60 * 60 * 24 * 7}`;
+
+    this.registerForm.reset();
+    alert(`Usuario registrado en cookie credential_${nextIndex}!`);
   }
+}
+
+
 }
